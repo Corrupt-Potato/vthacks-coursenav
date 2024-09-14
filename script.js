@@ -2,6 +2,7 @@ let canvas;
 let ctx;
 let selectedCourse;
 let courses = [];
+let courseDict = {}
 window.onload = function () {
     //alert('hi')
     //make request to data
@@ -20,6 +21,7 @@ async function loadCourses() {
         newData.value = courses[i].id
         newData.innerText = courses[i].name
         dataElement.appendChild(newData)
+        courseDict[courses[i].id] = courses[i]
     }
 }
 let startTime = 0;
@@ -37,6 +39,7 @@ function render() {
         ctx.lineTo(i, canvas.height);
         ctx.stroke()
     }
+    headNode.draw()
 }
 
 function navigate() {
@@ -53,6 +56,7 @@ function navigate() {
     }
     document.getElementById("overlay").hidden = true;
     document.getElementById("exitButton").hidden = false;
+    setupNodes();
 }
 function exitNav(){
     selectedCourse = null;
