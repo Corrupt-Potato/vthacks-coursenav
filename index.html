@@ -1,7 +1,31 @@
 <!DOCTYPE html>
-<head>
-    <title>Home Finder</title>
-</head>
-<body>
 
+<head>
+    <title>Course Navigator</title>
+    <link rel="stylesheet" type="text/css" href="style.css"/>
+    <script src="script.js"></script>
+</head>
+
+<body>
+    <div id="overlay">
+        <div id="courseSelector">
+            <h1>Welcome to Course Navigator!</h1>
+            <h2>What course would you like to navigate to?</h2>
+            <div>
+                <label>
+                    Course Selection:
+                    <input name=course list=courses>
+                    <datalist id=courses>
+                    </datalist>
+                </label>
+                <button>
+                    Navigate
+                </button>
+            </div>
+
+        </div>
+    </div>
+    <canvas id="courseCanvas">
+
+    </canvas>
 </body>
