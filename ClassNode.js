@@ -1,9 +1,12 @@
+let nodeW = 180;
+let nodeH = 90;
 class ClassNode {
     constructor(id) {
         this.id = id;
-        this.w = 180;
-        this.h = 90;
+        this.x = canvas.width / 2;
+        this.y = canvas.height / 2;
         this.margin = 8;
+        this.boxSize = 0;
         //setup children
         this.children = []
         if (courseDict[id] === undefined) {
@@ -20,33 +23,65 @@ class ClassNode {
     draw() {
         //draw a line to all children
         ctx.strokeStyle = "#000000"
-        for (let i = 0; i < this.children.length; i++) {
-            for (let j = 0; j < this.children[i].length; j++) {
-                let child = this.children[i][j]
-                ctx.beginPath()
-                ctx.moveTo(this.x,this.y)
-                ctx.lineTo(child.x,child.y)
-                ctx.stroke()
+        if (!this.taken) {
+            for (let i = 0; i < this.children.length; i++) {
+                for (let j = 0; j < this.children[i].length; j++) {
+                    let child = this.children[i][j]
+                    ctx.beginPath()
+                    ctx.moveTo(this.x, this.y)
+                    ctx.lineTo(child.x, child.y)
+                    ctx.stroke()
+                }
             }
         }
         ctx.fillStyle = "#000000";
-        ctx.fillRect(this.x - this.w / 2 - this.margin / 2, this.y - this.h / 2 - this.margin / 2, this.w + this.margin, this.h + this.margin)
+        ctx.fillRect(this.x - nodeW / 2 - this.margin / 2, this.y - nodeH / 2 - this.margin / 2, nodeW + this.margin, nodeH + this.margin)
         ctx.fillStyle = "#E5751F";
-        ctx.fillRect(this.x - this.w / 2, this.y - this.h / 2, this.w, this.h)
+        if (hoveredCourse == this.id) {
+            ctx.fillStyle = "#b0b0b0"
+        }
+        ctx.fillRect(this.x - nodeW / 2, this.y - nodeH / 2, nodeW, nodeH)
 
+        //draw course ID
         ctx.fillStyle = "#000000";
-        ctx.font = `${10}px Arial`
+        let txtMeasure = ctx.measureText(this.id)
+        let scaleFactor = Math.min(3 / 5 * nodeW / txtMeasure.width, nodeH / 3 / (txtMeasure.actualBoundingBoxAscent + txtMeasure.actualBoundingBoxDescent))
+        ctx.font = `${scaleFactor * parseFloat(ctx.font)}px Arial`
         ctx.textAlign = "center";
-        ctx.fillText(this.id, this.x, this.y)
+        txtMeasure = ctx.measureText(this.id)
+        ctx.fillText(this.id, this.x, this.y - nodeH / 3 + txtMeasure.actualBoundingBoxAscent)
 
+        //draw course title
+        ctx.fillStyle = "#000000";
+        txtMeasure = ctx.measureText(courseDict[this.id].name)
+        scaleFactor = Math.min(9 / 10 * nodeW / txtMeasure.width, nodeH / 3 / (txtMeasure.actualBoundingBoxAscent + txtMeasure.actualBoundingBoxDescent))
+        ctx.font = `${scaleFactor * parseFloat(ctx.font)}px Arial`
+        ctx.textAlign = "center";
+        txtMeasure = ctx.measureText(courseDict[this.id].name)
+        ctx.fillText(courseDict[this.id].name, this.x, this.y + nodeH / 3)
+        
+        let tgtSize = Math.min(nodeW / 8, nodeH / 4);
+        if(!this.taken){
+            tgtSize = 0;
+        }
+        this.boxSize = 0.8 * this.boxSize + 0.2 * tgtSize
+        ctx.drawImage(document.getElementById('checkbox'), this.x + nodeW/2 - this.boxSize, this.y - nodeH/2, this.boxSize, this.boxSize);
+        
+        if (this.taken) {
+            return;
+        }
         for (let i = 0; i < this.children.length; i++) {
             for (let j = 0; j < this.children[i].length; j++) {
                 this.children[i][j].draw()
             }
         }
+
     }
     getDepth() {
-        this.depth = 1;
+        let depth = 1;
+        if (this.taken) {
+            return depth;
+        }
         let maxChildrenDepth = 0;
         for (let i = 0; i < this.children.length; i++) {
             for (let j = 0; j < this.children[i].length; j++) {
@@ -56,48 +91,73 @@ class ClassNode {
                 }
             }
         }
-        return this.depth + maxChildrenDepth;
+        return depth + maxChildrenDepth;
     }
     getWidth() {
-        this.width = 1;
+        let width = 1;
+        if (this.taken) {
+            return width;
+        }
         let childrenWidth = 0;
         for (let i = 0; i < this.children.length; i++) {
             for (let j = 0; j < this.children[i].length; j++) {
                 childrenWidth += this.children[i][j].getWidth()
             }
         }
-        return Math.max(this.width, childrenWidth);
+        return Math.max(width, childrenWidth);
     }
     updatePosition(xOffset, yOffset, width, height) {
-        this.x = xOffset + width / 2;
-        this.y = yOffset + height / this.getDepth() / 2;
+        if (width / 2 < nodeW && width != 0) {
+            nodeW = width / 2;
+        }
+        if (height / 2 < nodeH && height != 0) {
+            nodeH = height / 2;
+        }
+        this.targetx = xOffset + width / 2;
+        this.targety = yOffset + height / this.getDepth() / 2;
         let deltaY = height / this.getDepth();
         let totalWidth = this.getWidth()
         let deltaX = 0
-        for (let i = 0; i < this.children.length; i++) {
-            for (let j = 0; j < this.children[i].length; j++) {
-                let widthFactor = this.children[i][j].getWidth() / totalWidth
-                this.children[i][j].updatePosition(xOffset + deltaX, yOffset + deltaY, width * widthFactor, height - deltaY)
-                deltaX += width * widthFactor
+        this.x = (this.x) * 0.9 + (this.targetx * 0.1)
+        this.y = (this.y) * 0.9 + (this.targety * 0.1)
+        if (this.taken) {
+
+            for (let i = 0; i < this.children.length; i++) {
+                for (let j = 0; j < this.children[i].length; j++) {
+                    let widthFactor = this.children[i][j].getWidth() / totalWidth
+                    this.children[i][j].updatePosition(this.x, this.y, 0, 0)
+                    deltaX += width * widthFactor
+                }
             }
-        }
-    }
-    getDescendants() {
-        let desc = []
-        for (let i = 0; i < this.children.length; i++) {
-            for (let j = 0; j < this.children[i].length; j++) {
-                desc.push(this.children[i][j])
-                let secondGen = this.children[i][j].getDescendants()
-                for (let k = 0; k < secondGen.length; k++) {
-                    desc.push(secondGen[k])
+        } else {
+
+            for (let i = 0; i < this.children.length; i++) {
+                for (let j = 0; j < this.children[i].length; j++) {
+                    let widthFactor = this.children[i][j].getWidth() / totalWidth
+                    this.children[i][j].updatePosition(xOffset + deltaX, yOffset + deltaY, width * widthFactor, height - deltaY)
+                    deltaX += width * widthFactor
                 }
             }
         }
-        return desc;
+    }
+    updateHoveredCourse() {
+        if (mouseX > this.x - nodeW / 2 && mouseX < this.x + nodeW / 2 && mouseY > this.y - nodeH / 2 && mouseY < this.y + nodeH / 2) {
+            hoveredCourse = this.id;
+            return;
+        }
+        for (let i = 0; i < this.children.length; i++) {
+            for (let j = 0; j < this.children[i].length; j++) {
+                this.children[i][j].updateHoveredCourse()
+            }
+        }
+    }
+    get taken() {
+        return takenClasses.includes(this.id)
     }
 }
-let headNode
 function setupNodes() {
+    takenClasses = []
     headNode = new ClassNode(selectedCourse.id)
     headNode.updatePosition(0, 0, canvas.width, canvas.height)
+
 }

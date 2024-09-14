@@ -3,6 +3,11 @@ let ctx;
 let selectedCourse;
 let courses = [];
 let courseDict = {}
+let mouseX = 0;;
+let mouseY = 0;
+let headNode
+let takenClasses = []
+let hoveredCourse = null;
 window.onload = function () {
     //alert('hi')
     //make request to data
@@ -10,7 +15,12 @@ window.onload = function () {
     ctx = canvas.getContext('2d')
     interval = setInterval(render, 25);
     loadCourses()
-    startTime = Date.now()
+    startTime = Date.now();
+    document.onmousemove = handleMouseMove;
+    function handleMouseMove(event) {
+        mouseX = event.pageX;
+        mouseY = event.pageY;
+    }
 }
 async function loadCourses() {
     let data = await (fetch("data.json").then(x => x.json()))
@@ -39,18 +49,33 @@ function render() {
         ctx.lineTo(i, canvas.height);
         ctx.stroke()
     }
-    headNode.draw()
+    if (headNode) {
+        hoveredCourse = null;
+        headNode.updateHoveredCourse()
+        headNode.draw()
+        nodeW = nodeW * 0.9 + 18;
+        nodeH = nodeH * 0.9 + 9;
+        headNode.updatePosition(0, 0, canvas.width, canvas.height)
+    }
 }
-
+function toggleCourse(){
+    if(hoveredCourse){
+        if(takenClasses.includes(hoveredCourse)){
+            takenClasses.splice(takenClasses.indexOf(hoveredCourse),1)
+        }else{
+            takenClasses.push(hoveredCourse)
+        }
+    }
+}
 function navigate() {
     selectedCourse = null;
     let targetCourseID = document.getElementById("selectedCourse").value;
     for (let i = 0; i < courses.length; i++) {
-        if(courses[i].id == targetCourseID){
+        if (courses[i].id == targetCourseID) {
             selectedCourse = courses[i]
         }
     }
-    if(selectedCourse == null){
+    if (selectedCourse == null) {
         //invalid entry
         return;
     }
@@ -58,7 +83,7 @@ function navigate() {
     document.getElementById("exitButton").hidden = false;
     setupNodes();
 }
-function exitNav(){
+function exitNav() {
     selectedCourse = null;
     document.getElementById("selectedCourse").value = "";
     document.getElementById("overlay").hidden = false;
