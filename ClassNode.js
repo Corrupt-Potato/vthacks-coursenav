@@ -22,18 +22,29 @@ class ClassNode {
     }
     draw() {
         //draw a line to all children
-        ctx.strokeStyle = "#000000"
         if (!this.taken) {
             for (let i = 0; i < this.children.length; i++) {
                 for (let j = 0; j < this.children[i].length; j++) {
                     let child = this.children[i][j]
+                    ctx.strokeStyle = "#000000"
+                    ctx.lineWidth = Math.min(nodeW / 2, nodeH) / 5
                     ctx.beginPath()
                     ctx.moveTo(this.x, this.y)
                     ctx.lineTo(child.x, child.y)
                     ctx.stroke()
+                    if (child.taken) {
+
+                        ctx.strokeStyle = "#0f0"
+                        ctx.lineWidth = Math.min(nodeW / 2, nodeH) / 10
+                        ctx.beginPath()
+                        ctx.moveTo(this.x, this.y)
+                        ctx.lineTo(child.x, child.y)
+                        ctx.stroke()
+                    }
                 }
             }
         }
+        //
         ctx.fillStyle = "#000000";
         ctx.fillRect(this.x - nodeW / 2 - this.margin / 2, this.y - nodeH / 2 - this.margin / 2, nodeW + this.margin, nodeH + this.margin)
         ctx.fillStyle = "#E5751F";
@@ -59,14 +70,14 @@ class ClassNode {
         ctx.textAlign = "center";
         txtMeasure = ctx.measureText(courseDict[this.id].name)
         ctx.fillText(courseDict[this.id].name, this.x, this.y + nodeH / 3)
-        
+
         let tgtSize = Math.min(nodeW / 8, nodeH / 4);
-        if(!this.taken){
+        if (!this.taken) {
             tgtSize = 0;
         }
         this.boxSize = 0.8 * this.boxSize + 0.2 * tgtSize
-        ctx.drawImage(document.getElementById('checkbox'), this.x + nodeW/2 - this.boxSize, this.y - nodeH/2, this.boxSize, this.boxSize);
-        
+        ctx.drawImage(document.getElementById('checkbox'), this.x + nodeW / 2 - this.boxSize, this.y - nodeH / 2, this.boxSize, this.boxSize);
+
         if (this.taken) {
             return;
         }
