@@ -14,17 +14,20 @@
             <div>
                 <label>
                     Course Selection:
-                    <input name=course list=courses>
+                    <input name=course id="selectedCourse" list=courses>
                     <datalist id=courses>
                     </datalist>
                 </label>
-                <button>
+                <button onclick="navigate()">
                     Navigate
                 </button>
             </div>
 
         </div>
     </div>
+    <div id="exitButton" hidden>
+        <button onclick="exitNav()">X</button>
+        </div>
     <canvas id="courseCanvas">
 
     </canvas>

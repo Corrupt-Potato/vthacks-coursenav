@@ -6,7 +6,7 @@ div#overlay{
     width: 100%;
     height: 100%;
     text-align: center;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0,0,0,0.2);
 }
 div#courseSelector{
     position: absolute;
@@ -23,3 +23,12 @@ body {
     padding: 0px;
     overflow: hidden; 
 }
+div#exitButton{
+    position: absolute;
+    width:50px;
+    height:50px;
+    right:10px;
+    height:10px;
+}
+h1 { font-size: 4vw }
+h2 { font-size: 3vw }
