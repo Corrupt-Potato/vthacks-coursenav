@@ -3,9 +3,9 @@
         {"id":"MATH 1226","name":"Calculus of a Single Variable","prereq":[["MATH 1225"]]},
         {"id":"MATH 1225","name":"Calculus of a Single Variable","prereq":[["MATH 1214"]]},
         {"id":"MATH 1025","name":"Elementary Calculus","prereq":[]},
-        {"id":"MATH 1026","name":"Elementary Calculus","prereq":[["MATH 1225","MATH 1025"]]},
+        {"id":"MATH 1026","name":"Elementary Calculus","prereq":[["MATH 1225"],["MATH 1025"]]},
         {"id":"MATH 1214","name":"Preparation for Calculus","prereq":[]},
-        {"id":"MATH 2114","name":"Introduction to Linear Algebra","prereq":[["MATH 1226","MATH 1225"]]},
-        {"id":"MATH 2214","name":"Introduction to Differential Equations","prereq":[["MATH 2114"],["MATH 1226"]]}
+        {"id":"MATH 2114","name":"Introduction to Linear Algebra","prereq":[["MATH 1226"],["MATH 1225"]]},
+        {"id":"MATH 2214","name":"Introduction to Differential Equations","prereq":[["MATH 2114","MATH 1226"]]}
     ]
 }

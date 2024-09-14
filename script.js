@@ -58,11 +58,11 @@ function render() {
         headNode.updatePosition(0, 0, canvas.width, canvas.height)
     }
 }
-function toggleCourse(){
-    if(hoveredCourse){
-        if(takenClasses.includes(hoveredCourse)){
-            takenClasses.splice(takenClasses.indexOf(hoveredCourse),1)
-        }else{
+function toggleCourse() {
+    if (hoveredCourse) {
+        if (takenClasses.includes(hoveredCourse)) {
+            takenClasses.splice(takenClasses.indexOf(hoveredCourse), 1)
+        } else {
             takenClasses.push(hoveredCourse)
         }
     }
@@ -88,5 +88,18 @@ function exitNav() {
     document.getElementById("selectedCourse").value = "";
     document.getElementById("overlay").hidden = false;
     document.getElementById("exitButton").hidden = true;
+}
+function drawLine(x1, y1, x2, y2, width, color = "#000") {
+    ctx.lineWidth = width
+    ctx.strokeStyle = color
+    ctx.beginPath()
+    ctx.moveTo(x1, y1)
+    ctx.lineTo(x2, y2)
+    ctx.stroke()
+}
+function drawRect(x, y, width, height, color = "#000") {
+    ctx.fillStyle = color;
+    ctx.fillRect(x, y, width, height)
+
 }
 let interval;
