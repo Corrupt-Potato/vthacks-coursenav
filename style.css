@@ -6,15 +6,17 @@ div#overlay{
     width: 100%;
     height: 100%;
     text-align: center;
-    background-color: rgba(0,0,0,0.3);
+    background-color: rgba(0,0,0,0.2);
 }
 div#courseSelector{
+    border-radius: 25px;
     position: absolute;
     left:25%;
     top:25%;
     width: 50%;
     height: 50%;
-    background-color: white;
+    filter: drop-shadow(10px 10px 0px #000000);
+    
 }
 html, 
 body {
@@ -28,7 +30,89 @@ div#exitButton{
     width:50px;
     height:50px;
     right:10px;
-    top:10px;
+    height:10px;
 }
-h1 { font-size: 4vw }
-h2 { font-size: 3vw }
+h1 { 
+    font-family: 'Roboto', sans-serif; color: white;
+    font-size: 3vw 
+    
+    
+}
+h2 {   
+    font-family: 'Roboto', sans-serif; color: white;
+    font-size: 2vw 
+
+
+}
+#selectedCourse {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: 1px solid #ccc;
+    padding: 10px;
+    font-size: 1rem;
+}
+    
+    .button-1 {
+      appearance: button;
+      background-color: #861F41;
+      border: solid transparent;
+      border-radius: 16px;
+      border-width: 0 0 4px;
+      box-sizing: border-box;
+      color: #FFFFFF;
+      cursor: pointer;
+      display: block;
+      font-family: din-round,sans-serif;
+      font-size: 2vw;
+      font-weight: 700;
+      letter-spacing: .8px;
+      line-height: 20px;
+      margin: 10px auto;
+      outline: none;
+      overflow: visible;
+      padding: 13px 16px;
+      text-align: center;
+      text-transform: uppercase;
+      touch-action: manipulation;
+      transform: translateZ(0);
+      transition: filter .2s;
+      user-select: none;
+      -webkit-user-select: none;
+      white-space: nowrap;
+      width: 75%;
+    }
+    
+    .button-1:after {
+      background-clip: padding-box;
+      background-color: #E5751F;
+      border: solid transparent;
+      border-radius: 16px;
+      border-width: 0 0 4px;
+      bottom: -4px;
+      content: "";
+      left: 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+      z-index: -1;
+    }
+    
+    .button-1:main,
+    .button-1:focus {
+      user-select: auto;
+    }
+    
+    .button-1:hover:not(:disabled) {
+      filter: brightness(1.1);
+      -webkit-filter: brightness(1.1);
+    }
+    
+    .button-1:disabled {
+      cursor: auto;
+    }
+    
+    .button-1:active {
+      border-width: 4px 0 0;
+      background: none;
+    }
