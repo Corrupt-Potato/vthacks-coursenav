@@ -23,24 +23,65 @@ class ClassNode {
     draw() {
         //draw a line to all children
         if (!this.taken) {
+            let satisfied = []
+            let avgXL = []
+            let minYL = []
             for (let i = 0; i < this.children.length; i++) {
+                let SAT = false;
+                let avgX = 0
+                let minY = this.children[i][0].y
+                for (let j = 0; j < this.children[i].length; j++) {
+                    avgX += this.children[i][j].x;
+                    if (this.children[i][j].taken) {
+                        SAT = true;
+                    }
+                    minY = Math.min(minY, this.children[i][j].y)
+                }
+                avgX /= this.children[i].length
+                avgXL.push(avgX)
+                minYL.push(minY)
+                satisfied.push(SAT)
+            }
+            ctx.lineCap = "round";
+            for (let i = 0; i < this.children.length; i++) {
+                let clauseX = avgXL[i];
+                let clauseY = (minYL[i] + this.y) / 2
+
+                ctx.strokeStyle = "#000000"
+                ctx.lineWidth = Math.min(nodeW / 2, nodeH) / 5
+                ctx.beginPath()
+                ctx.moveTo(clauseX, clauseY)
+                ctx.lineTo(this.x, this.y)
+                ctx.stroke()
                 for (let j = 0; j < this.children[i].length; j++) {
                     let child = this.children[i][j]
                     ctx.strokeStyle = "#000000"
                     ctx.lineWidth = Math.min(nodeW / 2, nodeH) / 5
                     ctx.beginPath()
-                    ctx.moveTo(this.x, this.y)
+                    ctx.moveTo(clauseX, clauseY)
                     ctx.lineTo(child.x, child.y)
                     ctx.stroke()
-                    if (child.taken) {
+                }
 
+                for (let j = 0; j < this.children[i].length; j++) {
+                    let child = this.children[i][j]
+                    if (child.taken) {
                         ctx.strokeStyle = "#0f0"
                         ctx.lineWidth = Math.min(nodeW / 2, nodeH) / 10
                         ctx.beginPath()
-                        ctx.moveTo(this.x, this.y)
+                        ctx.moveTo(clauseX, clauseY)
                         ctx.lineTo(child.x, child.y)
                         ctx.stroke()
                     }
+                }
+
+                if (satisfied[i]) {
+                    ctx.strokeStyle = "#0f0"
+                    ctx.lineWidth = Math.min(nodeW / 2, nodeH) / 10
+                    ctx.beginPath()
+                    ctx.moveTo(clauseX, clauseY)
+                    ctx.lineTo(this.x, this.y)
+                    ctx.stroke()
                 }
             }
         }
