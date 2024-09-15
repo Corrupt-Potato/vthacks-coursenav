@@ -17,7 +17,7 @@
             <h2>What course would you like to navigate to?</h2>
             <div>
                 <template id=hiddencourses hidden>
-                </template >
+                </template>
                 <label>
                     <input onkeyup="updateCourseReccs()" name=course id="selectedCourse" list=courses>
                     <datalist id=courses>
@@ -30,11 +30,16 @@
 
         </div>
     </div>
-    <div id="exitButton" hidden>
-        <button type="button" onclick="exitNav()" id='close'>close</button>
-    </div>
-    <div id="returnButton" hidden>
-        <button type="button" onclick="reCenter()" id='reCenter'>recenter</button>
+    <div id="navigatorOverlay" hidden>
+        <div id="exitButton">
+            <button type="button" onclick="exitNav()" id='close'>close</button>
+        </div>
+        <div id="tutorialText">
+            Click on any course to mark it as credited
+        </div>
+        <div id="returnButton">
+            <button type="button" onclick="reCenter()" id='reCenter'>recenter</button>
+        </div>
     </div>
     <canvas id="courseCanvas" onclick="toggleCourse()">
 
@@ -42,4 +47,3 @@
 
     <img src="checkbox.png" id="checkbox" hidden />
 </body>
-

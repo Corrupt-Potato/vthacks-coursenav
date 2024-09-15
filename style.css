@@ -224,7 +224,16 @@ h2 {
     /* Ensure the logo is above the background */
 }
 
+#tutorialText{
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+    position: absolute;
+    width: 100%;
+    left:0px;
+    top:25px;
+    color: #fff;
 
+}
 #returnButton {
     position: absolute;
     left: 16px;

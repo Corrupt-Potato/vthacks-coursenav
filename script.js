@@ -147,6 +147,7 @@ function updateCourseReccs() {
  */
 function toggleCourse() {
     if (hoveredCourse && distMoved < 30) {
+        document.getElementById("tutorialText").hidden = true;
         if (takenClasses.includes(hoveredCourse)) {
             takenClasses.splice(takenClasses.indexOf(hoveredCourse), 1);
         } else {
@@ -184,8 +185,7 @@ function navigate() {
         return;
     }
     document.getElementById("overlay").hidden = true;
-    document.getElementById("exitButton").hidden = false;
-    document.getElementById("returnButton").hidden = false;
+    document.getElementById("navigatorOverlay").hidden = false;
     document.getElementById("logo").hidden = true;
     setupNodes();
 }
@@ -194,8 +194,7 @@ function exitNav() {
     headNode = null;
     document.getElementById("selectedCourse").value = "";
     document.getElementById("overlay").hidden = false;
-    document.getElementById("exitButton").hidden = true;
-    document.getElementById("returnButton").hidden = true;
+    document.getElementById("navigatorOverlay").hidden = true;
     document.getElementById("logo").hidden = false;
 }
 function drawLine(x1, y1, x2, y2, width, color = "#000") {
