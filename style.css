@@ -192,3 +192,13 @@ h2 {
       
       &:after { transform: rotate(-45deg); }
     }
+
+#logo {
+      position: absolute;  /* Position relative to the nearest positioned ancestor */
+      top: 50%;            /* Center vertically */
+      left: 50%;           /* Center horizontally */
+      transform: translate(-50%, -50%); /* Offset by 50% of its own size to center */
+      max-width: 500px;   /* Adjust the size of the logo */
+      z-index: 0.1;        /* Ensure the logo is above the background */
+    }
+
