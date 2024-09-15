@@ -19,19 +19,21 @@ let mouseDown = false;
 let scrollVal = 0;
 
 window.onload = function () {
-    document.body.onwheel = function (event){
+    //credit
+
+    document.body.onwheel = function (event) {
         scrollVal += event.deltaY;
-        if(scrollVal < -1000){
+        if (scrollVal < -1000) {
             scrollVal = -1000;
         }
-        if(scrollVal > 1000){
+        if (scrollVal > 1000) {
             scrollVal = 1000;
         }
-        let oldCenterX = (graphXOffset + canvas.width/2) / scaleFactor;
-        
-        scaleFactor = Math.pow(1.001,scrollVal)
+        let oldCenterX = (graphXOffset + canvas.width / 2) / scaleFactor;
 
-        graphXOffset = oldCenterX * scaleFactor - canvas.width/2
+        scaleFactor = Math.pow(1.001, scrollVal)
+
+        graphXOffset = oldCenterX * scaleFactor - canvas.width / 2
         // graphXOffset * scaleFactor + scaleFactor * canvas.width / 2 = graphXOffset * scaleFactor + graphXOffset * canvas.width / 2
     }
     //manage mouse states
@@ -113,6 +115,31 @@ function render() {
         headNode.draw();
         headNode.updateHoveredCourse();
         headNode.draw();
+    } 
+}
+/**
+ * 
+ */
+function updateCourseReccs() {
+
+    let currString = document.getElementById("selectedCourse").value.toLowerCase()
+    if (currString.length > 1) {
+        let courseElement = document.getElementById("courses");
+        courseElement.innerHTML = "";
+        let addedCount = 0;
+        for (let i = 0; i < courses.length; i++) {
+            if (courses[i].name.toLowerCase().includes(currString) || courses[i].id.toLowerCase().includes(currString)) {
+                addedCount++;
+                let newData = document.createElement("option")
+                newData.value = courses[i].id
+                newData.innerText = courses[i].name
+                courseElement.appendChild(newData)
+
+                if (addedCount >= 3) {
+                    break;
+                }
+            }
+        }
     }
 }
 /**

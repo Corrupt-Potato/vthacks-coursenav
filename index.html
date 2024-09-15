@@ -16,8 +16,10 @@
             <h1>Welcome to Course Navigator!</h1>
             <h2>What course would you like to navigate to?</h2>
             <div>
+                <template id=hiddencourses hidden>
+                </template >
                 <label>
-                    <input name=course id="selectedCourse" list=courses>
+                    <input onkeyup="updateCourseReccs()" name=course id="selectedCourse" list=courses>
                     <datalist id=courses>
                     </datalist>
                 </label>
