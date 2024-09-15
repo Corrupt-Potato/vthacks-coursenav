@@ -9,13 +9,35 @@ let graphXOffset = 0;
 let graphYOffset = 0;
 let graphWidth = 0;
 let graphHeight = 0;
+let scaleFactor = 1;
 let headNode;
 let takenClasses = []
 let hoveredCourse = null;
+let distMoved = 0;
 let mouseDown = false;
+
+let scrollVal = 0;
+
 window.onload = function () {
+    document.body.onwheel = function (event){
+        scrollVal += event.deltaY;
+        if(scrollVal < -1000){
+            scrollVal = -1000;
+        }
+        if(scrollVal > 1000){
+            scrollVal = 1000;
+        }
+        let oldCenterX = (graphXOffset + canvas.width/2) / scaleFactor;
+        
+        scaleFactor = Math.pow(1.001,scrollVal)
+
+        graphXOffset = oldCenterX * scaleFactor - canvas.width/2
+        // graphXOffset * scaleFactor + scaleFactor * canvas.width / 2 = graphXOffset * scaleFactor + graphXOffset * canvas.width / 2
+    }
+    //manage mouse states
     document.body.onmousedown = function () {
         mouseDown = true;
+        distMoved = 0;
     }
     document.body.onmouseup = function () {
         mouseDown = false;
@@ -30,8 +52,11 @@ window.onload = function () {
     document.onmousemove = handleMouseMove;
     function handleMouseMove(event) {
         if (mouseDown) {
-            graphXOffset += mouseX - event.pageX;
-            graphYOffset += mouseY - event.pageY;
+            let deltaX = mouseX - event.pageX
+            let deltaY = mouseY - event.pageY
+            distMoved += Math.abs(deltaY) + Math.abs(deltaX)
+            graphXOffset += deltaX
+            graphYOffset += deltaY;
         }
         mouseX = event.pageX;
         mouseY = event.pageY;
@@ -55,14 +80,14 @@ function render() {
     drawRect(0, 0, canvas.width, canvas.height, "#861F41")
     let runTime = Date.now()
     for (let i = (runTime / 50) % 100 - 50; i < canvas.height / 5 + canvas.width; i += 50) {
-        drawLine(i - canvas.height / 5, 0, i, canvas.height, 10, "#f5953F")
+        drawLine(i - canvas.height / 5, 0, i, canvas.height, 10, "#ab4343")
     }
     if (headNode) {
         hoveredCourse = null;
         nodeW = nodeW * 0.9 + 18;
         nodeH = nodeH * 0.9 + 9;
-        graphWidth = headNode.getWidth() * 240;
-        graphHeight = headNode.getDepth() * 100;
+        graphWidth = headNode.getWidth() * 240 * scaleFactor;
+        graphHeight = headNode.getDepth() * 100 * scaleFactor;
         if (graphWidth < canvas.width) {
             graphWidth = canvas.width;
             graphXOffset = 0;
@@ -94,15 +119,20 @@ function render() {
  * Toggles the currently hovered course
  */
 function toggleCourse() {
-    if (hoveredCourse) {
+    if (hoveredCourse && distMoved < 30) {
         if (takenClasses.includes(hoveredCourse)) {
             takenClasses.splice(takenClasses.indexOf(hoveredCourse), 1);
         } else {
             takenClasses.push(hoveredCourse);
         }
-        graphXOffset = headNode.getWidth() * 120 - canvas.width / 2;
-
     }
+}
+/**
+ * Recenters the graph
+ */
+function reCenter() {
+    graphXOffset = headNode.getWidth() * 120 * scaleFactor - canvas.width / 2;
+    graphYOffset = 0;
 }
 /**
  * Initializes the head node and resets data
@@ -111,8 +141,8 @@ function setupNodes() {
     takenClasses = [];
     headNode = new ClassNode(selectedCourse.id);
     headNode.updatePosition(0, 0, canvas.width, canvas.height);
-    graphXOffset = headNode.getWidth() * 120 - canvas.width / 2;
-    console.log(graphXOffset);
+    scaleFactor = 1;
+    reCenter()
 }
 function navigate() {
     selectedCourse = null;
@@ -133,13 +163,14 @@ function navigate() {
 }
 function exitNav() {
     selectedCourse = null;
+    headNode = null;
     document.getElementById("selectedCourse").value = "";
     document.getElementById("overlay").hidden = false;
     document.getElementById("exitButton").hidden = true;
     document.getElementById("logo").hidden = false;
 }
 function drawLine(x1, y1, x2, y2, width, color = "#000") {
-    if((x1 < 0 && x2 < 0) || (x1 > canvas.width && x2 > canvas.width)){
+    if ((x1 < 0 && x2 < 0) || (x1 > canvas.width && x2 > canvas.width)) {
         return
     }
     ctx.lineWidth = width
@@ -150,11 +181,11 @@ function drawLine(x1, y1, x2, y2, width, color = "#000") {
     ctx.stroke()
 }
 function drawRect(x, y, width, height, color = "#000") {
-    if(x + width < 0 || y + height < 0 || x > canvas.width || y > canvas.height){
+    if (x + width < 0 || y + height < 0 || x > canvas.width || y > canvas.height) {
         return
     }
     ctx.fillStyle = color;
     ctx.fillRect(x, y, width, height)
-    
+
 }
 let interval;
