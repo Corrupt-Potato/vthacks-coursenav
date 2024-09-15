@@ -100,6 +100,7 @@ function toggleCourse() {
         } else {
             takenClasses.push(hoveredCourse);
         }
+        graphXOffset = headNode.getWidth() * 120 - canvas.width / 2;
 
     }
 }
@@ -127,6 +128,7 @@ function navigate() {
     }
     document.getElementById("overlay").hidden = true;
     document.getElementById("exitButton").hidden = false;
+    document.getElementById("logo").hidden = true;
     setupNodes();
 }
 function exitNav() {
@@ -134,8 +136,12 @@ function exitNav() {
     document.getElementById("selectedCourse").value = "";
     document.getElementById("overlay").hidden = false;
     document.getElementById("exitButton").hidden = true;
+    document.getElementById("logo").hidden = false;
 }
 function drawLine(x1, y1, x2, y2, width, color = "#000") {
+    if((x1 < 0 && x2 < 0) || (x1 > canvas.width && x2 > canvas.width)){
+        return
+    }
     ctx.lineWidth = width
     ctx.strokeStyle = color
     ctx.beginPath()
