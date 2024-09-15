@@ -29,13 +29,17 @@ class ClassNode {
         for (let i = 0; i < prereqs.length; i++) {
             this.children.push([])
             this.sat.push(false)
+            let valid = true;
             for (let j = 0; j < prereqs[i].length; j++) {
                 if ((prereqs[i][j]) in courseDict) {
                     this.children[this.children.length - 1].push(new ClassNode(prereqs[i][j]))
+                }else{
+                    valid = false;
                 }
             }
-            if (this.children[this.children.length - 1].length == 0) {
+            if (!valid) {
                 this.children.pop()
+                this.sat.pop()
             }
         }
     }
