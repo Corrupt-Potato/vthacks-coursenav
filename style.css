@@ -116,3 +116,79 @@ h2 {
       border-width: 4px 0 0;
       background: none;
     }
+
+
+    .close {
+      position: absolute;
+      right: 32px;
+      top: 32px;
+      width: 40px;
+      height: 40px;
+      opacity: 0.3;
+    }
+    .close:hover {
+      opacity: 1;
+    }
+    .close:before, .close:after {
+      position: absolute;
+      left: 20px;  
+      content: ' ';
+      height: 45px; 
+      width: 4px; 
+      background-color: #333;
+    }
+    
+    #close:before, #close:after {
+      position: absolute;
+      top: 25%;                 
+      left: calc(50% - .15em);   
+      width: .1em;              
+      height: 60%;               
+      border-radius: .125em;     
+      background: currentcolor;  
+      content: '';
+    }
+    .close:before {
+      transform: rotate(45deg);
+    }
+    .close:after {
+      transform: rotate(-45deg);
+    }
+
+    #close {
+      overflow: hidden;
+      position: relative;
+      border: none;
+      padding: 0;
+      width: 5em; height: 5em;
+      border-radius: 50%;
+      background: transparent;
+      color: #ffffff;
+      font: inherit;
+      text-indent: 100%;
+      cursor: pointer;
+      position: fixed;     
+      top: 16px;          
+      right: 16px;
+      
+      &:focus {
+        outline: solid 0 transparent;
+        box-shadow: 0 0 0 2px #ffffff
+      }
+      
+      &:hover {
+        background: rgba(255, 0, 0, 0.13)
+      }
+      
+      &:before, &:after {
+        position: absolute;
+        top: 15%; left: calc(50% - .0625em);
+        width: .125em; height: 70%;
+        border-radius: .125em;
+        transform: rotate(45deg);
+        background: currentcolor;
+        content: ''
+      }
+      
+      &:after { transform: rotate(-45deg); }
+    }
