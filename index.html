@@ -8,6 +8,9 @@
 </head>
 
 <body>
+    <div id="background-container">
+        <img id="logo" src="vtlogohawktuah.png" alt="Logo">
+    </div>
     <div id="overlay">
         <div id="courseSelector">
             <h1>Welcome to Course Navigator!</h1>
@@ -26,10 +29,12 @@
         </div>
     </div>
     <div id="exitButton" hidden>
-        <button onclick="exitNav()">X</button>
+        <button type="button" onclick="exitNav()" id='close'>close</button>
     </div>
     <canvas id="courseCanvas" onclick="toggleCourse()">
 
     </canvas>
+
     <img src="checkbox.png" id="checkbox" hidden />
 </body>
+
