@@ -185,6 +185,7 @@ function navigate() {
     }
     document.getElementById("overlay").hidden = true;
     document.getElementById("exitButton").hidden = false;
+    document.getElementById("returnButton").hidden = false;
     document.getElementById("logo").hidden = true;
     setupNodes();
 }
@@ -194,6 +195,7 @@ function exitNav() {
     document.getElementById("selectedCourse").value = "";
     document.getElementById("overlay").hidden = false;
     document.getElementById("exitButton").hidden = true;
+    document.getElementById("returnButton").hidden = true;
     document.getElementById("logo").hidden = false;
 }
 function drawLine(x1, y1, x2, y2, width, color = "#000") {
