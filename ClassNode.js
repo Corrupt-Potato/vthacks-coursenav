@@ -1,6 +1,15 @@
 let nodeW = 180;
 let nodeH = 90;
+/**
+ * Stores a class node
+ * @version 1.2
+ * @author T.J. Nickerson
+ */
 class ClassNode {
+    /**
+     * 
+     * @param {String} id The Course ID representing the class. Example: MATH 1226
+     */
     constructor(id) {
         this.id = id;
         this.x = canvas.width / 2;
@@ -11,21 +20,28 @@ class ClassNode {
         this.visible = true;
         //setup children
         this.children = []
+
         if (courseDict[id] === undefined) {
+            console.log(id)
             return;
         }
-        this.updatePrereqs()
-    }
-    updatePrereqs() {
         let prereqs = courseDict[this.id].prereq
         for (let i = 0; i < prereqs.length; i++) {
             this.children.push([])
             this.sat.push(false)
             for (let j = 0; j < prereqs[i].length; j++) {
-                this.children[i].push(new ClassNode(prereqs[i][j]))
+                if ((prereqs[i][j]) in courseDict) {
+                    this.children[this.children.length - 1].push(new ClassNode(prereqs[i][j]))
+                }
+            }
+            if (this.children[this.children.length - 1].length == 0) {
+                this.children.pop()
             }
         }
     }
+    /**
+     * Updates the satisfiability array of the class node
+     */
     updateSAT() {
         this.sat = []
         for (let i = 0; i < this.children.length; i++) {
@@ -38,10 +54,18 @@ class ClassNode {
             this.sat.push(SAT)
         }
     }
+    /**
+     * Sets the visibility of the given node 
+     * @param {Boolean} vis if the node should be visible
+     */
     setVisible(vis) {
         this.visible = vis;
         this.setChildVisibility(vis)
     }
+    /**
+     * Sets the child visibility
+     * @param {Boolean} vis if the children nodes should be visible
+     */
     setChildVisibility(vis) {
         for (let i = 0; i < this.children.length; i++) {
             for (let j = 0; j < this.children[i].length; j++) {
@@ -49,66 +73,30 @@ class ClassNode {
             }
         }
     }
+    /**
+     * Draws the lines to child nodes
+     */
     drawLines() {
-        if (this.taken) {
-            return;
+        let avgXL = []
+        let minYL = []
+        for (let i = 0; i < this.children.length; i++) {
+            let avgX = 0
+            let minY = this.children[i][0].y
+            for (let j = 0; j < this.children[i].length; j++) {
+                avgX += this.children[i][j].x;
+                minY = Math.min(minY, this.children[i][j].y)
+            }
+            avgX /= this.children[i].length
+            avgXL.push(avgX)
+            minYL.push(minY)
         }
-        if (this.sat.includes(true)) {
-            let avgXL = []
-            let minYL = []
-            for (let i = 0; i < this.children.length; i++) {
-                let avgX = 0
-                let minY = this.children[i][0].y
-                for (let j = 0; j < this.children[i].length; j++) {
-                    avgX += this.children[i][j].x;
-                    minY = Math.min(minY, this.children[i][j].y)
-                }
-                avgX /= this.children[i].length
-                avgXL.push(avgX)
-                minYL.push(minY)
-            }
-            ctx.lineCap = "round";
-            let minClauses = this.getMinSatWidth()
-            for (let i = 0; i < this.children.length; i++) {
-                if (this.sat[i] && minClauses == this.children[i].length) {
-                    let clauseX = avgXL[i];
-                    let clauseY = (minYL[i] + this.y) / 2
-                    drawLine(clauseX, clauseY, this.x, this.y, Math.min(nodeW / 2, nodeH) / 5)
-                    for (let j = 0; j < this.children[i].length; j++) {
-                        let child = this.children[i][j]
-                        drawLine(clauseX, clauseY, child.x, child.y, Math.min(nodeW / 2, nodeH) / 5)
-                    }
-                    for (let j = 0; j < this.children[i].length; j++) {
-                        let child = this.children[i][j]
-                        if (child.taken) {
-                            drawLine(clauseX, clauseY, child.x, child.y, Math.min(nodeW / 2, nodeH) / 10, "#0f0")
-                        }
-                    }
+        ctx.lineCap = "round";
+        let minClauses = this.getMinSatWidth()
 
-                    if (this.sat[i]) {
-                        drawLine(clauseX, clauseY, this.x, this.y, Math.min(nodeW / 2, nodeH) / 10, "#0f0")
-                    }
-                    break;
-                }
-            }
-        } else {
-            let avgXL = []
-            let minYL = []
-            for (let i = 0; i < this.children.length; i++) {
-                let avgX = 0
-                let minY = this.children[i][0].y
-                for (let j = 0; j < this.children[i].length; j++) {
-                    avgX += this.children[i][j].x;
-                    minY = Math.min(minY, this.children[i][j].y)
-                }
-                avgX /= this.children[i].length
-                avgXL.push(avgX)
-                minYL.push(minY)
-            }
-            ctx.lineCap = "round";
-            for (let i = 0; i < this.children.length; i++) {
-                let clauseX = avgXL[i];
-                let clauseY = (minYL[i] + this.y) / 2
+        for (let i = 0; i < this.children.length; i++) {
+            let clauseX = avgXL[i];
+            let clauseY = (minYL[i] + this.y) / 2
+            if (!this.sat.includes(true) || (this.sat[i] && minClauses == this.children[i].length)) {
                 drawLine(clauseX, clauseY, this.x, this.y, Math.min(nodeW / 2, nodeH) / 5)
                 for (let j = 0; j < this.children[i].length; j++) {
                     let child = this.children[i][j]
@@ -124,13 +112,20 @@ class ClassNode {
                 if (this.sat[i]) {
                     drawLine(clauseX, clauseY, this.x, this.y, Math.min(nodeW / 2, nodeH) / 10, "#0f0")
                 }
+                if (this.sat.includes(true)) {
+                    break;
+                }
             }
-
         }
     }
+    /**
+     * Draws the node and all elements regarding it
+     */
     draw() {
         //draw a line to all children
-        this.drawLines();
+        if (!this.taken) {
+            this.drawLines();
+        }
         //
         drawRect(this.x - nodeW / 2 - this.margin / 2, this.y - nodeH / 2 - this.margin / 2, nodeW + this.margin, nodeH + this.margin)
         let fillStyle = "#E5751F";
@@ -176,7 +171,7 @@ class ClassNode {
                             this.children[i][j].setVisible(true)
                         }
                         alreadyShown = true;
-                    }else{
+                    } else {
                         for (let j = 0; j < this.children[i].length; j++) {
                             this.children[i][j].setVisible(false)
                         }
@@ -190,7 +185,7 @@ class ClassNode {
                     }
                 }
             }
-        }else{
+        } else {
             this.setChildVisibility(false)
         }
     }
@@ -247,11 +242,11 @@ class ClassNode {
         return width
     }
     updatePosition(xOffset, yOffset, width, height) {
-        if (width / 2 < nodeW && width != 0) {
-            nodeW = width / 2;
+        if (width * 2 / 3 < nodeW && width != 0) {
+            nodeW = width * 2 / 3;
         }
-        if (height / 2 < nodeH && height != 0) {
-            nodeH = height / 2;
+        if (height * 2 / 3 < nodeH && height != 0) {
+            nodeH = height * 2 / 3;
         }
         this.targetx = xOffset + width / 2;
         this.targety = yOffset + height / this.getDepth() / 2;
@@ -308,10 +303,4 @@ class ClassNode {
     get taken() {
         return takenClasses.includes(this.id)
     }
-}
-function setupNodes() {
-    takenClasses = []
-    headNode = new ClassNode(selectedCourse.id)
-    headNode.updatePosition(0, 0, canvas.width, canvas.height)
-
 }

@@ -3,27 +3,42 @@ let ctx;
 let selectedCourse;
 let courses = [];
 let courseDict = {}
-let mouseX = 0;;
+let mouseX = 0;
 let mouseY = 0;
-let headNode
+let graphXOffset = 0;
+let graphYOffset = 0;
+let graphWidth = 0;
+let graphHeight = 0;
+let headNode;
 let takenClasses = []
 let hoveredCourse = null;
+let mouseDown = false;
 window.onload = function () {
+    document.body.onmousedown = function () {
+        mouseDown = true;
+    }
+    document.body.onmouseup = function () {
+        mouseDown = false;
+    }
     //alert('hi')
     //make request to data
     canvas = document.getElementById('courseCanvas');
     ctx = canvas.getContext('2d')
     interval = setInterval(render, 25);
+    //use data
     loadCourses()
-    startTime = Date.now();
     document.onmousemove = handleMouseMove;
     function handleMouseMove(event) {
+        if (mouseDown) {
+            graphXOffset += mouseX - event.pageX;
+            graphYOffset += mouseY - event.pageY;
+        }
         mouseX = event.pageX;
         mouseY = event.pageY;
     }
 }
 async function loadCourses() {
-    let data = await (fetch("data.json").then(x => x.json()))
+    let data = await (fetch("prerequisite_matrices.json").then(x => x.json()))
     courses = data["courses"]
     let dataElement = document.getElementById("courses")
     for (let i = 0; i < courses.length; i++) {
@@ -34,38 +49,69 @@ async function loadCourses() {
         courseDict[courses[i].id] = courses[i]
     }
 }
-let startTime = 0;
 function render() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    ctx.fillStyle = "#861F41"
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
-    ctx.strokeStyle = "#E5751F"
-    ctx.lineWidth = 10;
-    let runTime = Date.now() - startTime
+    drawRect(0, 0, canvas.width, canvas.height, "#861F41")
+    let runTime = Date.now()
     for (let i = (runTime / 50) % 100 - 50; i < canvas.height / 5 + canvas.width; i += 50) {
-        ctx.beginPath();
-        ctx.moveTo(i - canvas.height / 5, 0);
-        ctx.lineTo(i, canvas.height);
-        ctx.stroke()
+        drawLine(i - canvas.height / 5, 0, i, canvas.height, 10, "#f5953F")
     }
     if (headNode) {
         hoveredCourse = null;
-        headNode.updateHoveredCourse()
-        headNode.draw()
         nodeW = nodeW * 0.9 + 18;
         nodeH = nodeH * 0.9 + 9;
-        headNode.updatePosition(0, 0, canvas.width, canvas.height)
+        graphWidth = headNode.getWidth() * 240;
+        graphHeight = headNode.getDepth() * 100;
+        if (graphWidth < canvas.width) {
+            graphWidth = canvas.width;
+            graphXOffset = 0;
+        }
+        if (graphHeight < canvas.height) {
+            graphHeight = canvas.height;
+            graphYOffset = 0;
+        }
+        if (graphXOffset < 0) {
+            graphXOffset = 0;
+        }
+        if (graphYOffset < 0) {
+            graphYOffset = 0;
+        }
+        if (graphXOffset > graphWidth - canvas.width) {
+            graphXOffset = graphWidth - canvas.width;
+        }
+        if (graphYOffset > graphHeight - canvas.height) {
+            graphYOffset = graphHeight - canvas.height;
+        }
+        headNode.updatePosition(-graphXOffset, -graphYOffset, graphWidth, graphHeight)
+        headNode.updateHoveredCourse();
+        headNode.draw();
+        headNode.updateHoveredCourse();
+        headNode.draw();
     }
 }
+/**
+ * Toggles the currently hovered course
+ */
 function toggleCourse() {
     if (hoveredCourse) {
         if (takenClasses.includes(hoveredCourse)) {
-            takenClasses.splice(takenClasses.indexOf(hoveredCourse), 1)
+            takenClasses.splice(takenClasses.indexOf(hoveredCourse), 1);
         } else {
-            takenClasses.push(hoveredCourse)
+            takenClasses.push(hoveredCourse);
         }
+
     }
+}
+/**
+ * Initializes the head node and resets data
+ */
+function setupNodes() {
+    takenClasses = [];
+    headNode = new ClassNode(selectedCourse.id);
+    headNode.updatePosition(0, 0, canvas.width, canvas.height);
+    graphXOffset = headNode.getWidth() * 120 - canvas.width / 2;
+    console.log(graphXOffset);
 }
 function navigate() {
     selectedCourse = null;
@@ -98,8 +144,11 @@ function drawLine(x1, y1, x2, y2, width, color = "#000") {
     ctx.stroke()
 }
 function drawRect(x, y, width, height, color = "#000") {
+    if(x + width < 0 || y + height < 0 || x > canvas.width || y > canvas.height){
+        return
+    }
     ctx.fillStyle = color;
     ctx.fillRect(x, y, width, height)
-
+    
 }
 let interval;
