@@ -251,17 +251,19 @@ h2 {
     height: 5em;
     background-color: transparent;
     border: none;
-    padding: 0; 
+    padding: 0px;
+    margin: 0px; 
     display: flex;
-    align-items: left;
     justify-content: left;
     border-radius: 50%;
     cursor: pointer; 
     overflow: hidden; 
 }
 
-#returnButton img {
-    right: 10;
+#returnButton button, #returnButton button img {
+    position: absolute;
+    left:0px;
+    top:0px;
     width: 100%; 
     height: 100%; 
     object-fit: cover; 

@@ -22,7 +22,7 @@ window.onload = function () {
     //credit
 
     document.body.onwheel = function (event) {
-        scrollVal += event.deltaY;
+        scrollVal -= event.deltaY;
         if (scrollVal < -1000) {
             scrollVal = -1000;
         }
