@@ -69,10 +69,6 @@ async function loadCourses() {
     courses = data["courses"]
     let dataElement = document.getElementById("courses")
     for (let i = 0; i < courses.length; i++) {
-        let newData = document.createElement("option")
-        newData.value = courses[i].id
-        newData.innerText = courses[i].name
-        dataElement.appendChild(newData)
         courseDict[courses[i].id] = courses[i]
     }
 }

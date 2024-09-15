@@ -33,7 +33,7 @@ class ClassNode {
             for (let j = 0; j < prereqs[i].length; j++) {
                 if ((prereqs[i][j]) in courseDict) {
                     this.children[this.children.length - 1].push(new ClassNode(prereqs[i][j]))
-                }else{
+                } else {
                     valid = false;
                 }
             }
@@ -154,7 +154,7 @@ class ClassNode {
         ctx.font = `${scaleFactor * parseFloat(ctx.font)}px Arial`
         ctx.textAlign = "center";
         txtMeasure = ctx.measureText(courseDict[this.id].name)
-        ctx.fillText(courseDict[this.id].name, this.x, this.y + nodeH / 3)
+        ctx.fillText(courseDict[this.id].name, this.x, this.y + nodeH / 3, nodeW * 9 / 10)
 
         let tgtSize = Math.min(nodeW / 8, nodeH / 4);
         if (!this.taken) {
